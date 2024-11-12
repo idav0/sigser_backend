@@ -36,7 +36,7 @@ public class SecurityConfiguration {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/signup").permitAll()
+                        .requestMatchers("/auth/signup").hasAnyAuthority( "SUPERADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

@@ -1,5 +1,6 @@
 package mx.edu.utez.sigser.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import mx.edu.utez.sigser.models.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class ApplicationConfiguration {
+
+    static {
+        Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        dotenv.entries().forEach(entry -> {
+            System.setProperty(entry.getKey(), entry.getValue());
+        });
+    }
+
     private final UserRepository userRepository;
 
     public ApplicationConfiguration(UserRepository userRepository) {
