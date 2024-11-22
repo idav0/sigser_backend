@@ -35,9 +35,10 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/auth/signup").hasAnyAuthority( "SUPERADMIN")
-                        .anyRequest().authenticated()
+                        //.requestMatchers("/api-sigser/auth/login").permitAll()
+                        //.requestMatchers("/api-sigser/auth/forgot-password").permitAll()
+                        //.requestMatchers("/api-sigser/auth/signup").hasAnyAuthority( "SUPERADMIN")
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
