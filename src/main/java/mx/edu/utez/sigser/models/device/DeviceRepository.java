@@ -1,4 +1,8 @@
 package mx.edu.utez.sigser.models.device;
 
-public interface DeviceRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface DeviceRepository extends JpaRepository<Device, Long> {
 }
