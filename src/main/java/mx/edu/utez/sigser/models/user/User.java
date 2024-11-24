@@ -4,6 +4,7 @@ package mx.edu.utez.sigser.models.user;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
+import mx.edu.utez.sigser.models.repair.Repair;
 import mx.edu.utez.sigser.models.user_type.UserType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,6 +53,13 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "user_type_id")
     private UserType userType;
+
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    private List<Repair> repairsClient;
+
+    @OneToMany(mappedBy = "technician", cascade = CascadeType.ALL)
+    private List<Repair> repairsTechnician;
 
 
 
