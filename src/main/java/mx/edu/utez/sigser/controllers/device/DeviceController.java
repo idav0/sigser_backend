@@ -39,8 +39,6 @@ public class DeviceController {
         );
     }
 
-    //TODO : Create get for user id
-
     /*@PostMapping("/")
     public ResponseEntity<byte[]> generateQRCode(@RequestBody CreateDeviceDTO dto) {
         try {
