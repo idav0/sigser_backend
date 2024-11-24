@@ -28,4 +28,12 @@ public class DeviceType {
     @JsonIgnore
     private Device device;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
 }

@@ -41,6 +41,17 @@ public class Device {
     @JsonIgnore
     private List<Repair> repairs;
 
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", model='" + model + '\'' +
+                ", brand='" + brand + '\'' +
+                ", serialNumber='" + serialNumber + '\'' +
+                ", deviceType=" + deviceType.toString()  +
+                '}';
+    }
+
 
 
 }
