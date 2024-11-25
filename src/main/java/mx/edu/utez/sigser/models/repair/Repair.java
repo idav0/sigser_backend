@@ -90,7 +90,6 @@ public class Repair {
                 "id=" + id +
                 ", problem_description='" + problem_description + '\'' +
                 ", entry_date='" + entry_date + '\'' +
-                ", repairStatus=" + repairStatus.toString() +
                 ", device=" + device.toString() +
                 '}';
     }
