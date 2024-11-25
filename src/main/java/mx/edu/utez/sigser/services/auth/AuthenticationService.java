@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class AuthenticationService {
 
     }
 
-
+    @Transactional(rollbackFor = SQLException.class)
     public Response<User> signup(RegisterUserDTO input, String userTypeName) {
         if (input.getEmail() == null || input.getPassword() == null || input.getName() == null || input.getLastname() == null || input.getPhone() == null) {
             return new Response<>(
@@ -92,7 +93,7 @@ public class AuthenticationService {
         );
     }
 
-    @Transactional
+    @Transactional(rollbackFor = SQLException.class)
     public Response<Object> updateNewUserPassword(UpdateNewUserPasswordDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
@@ -161,7 +162,7 @@ public class AuthenticationService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = SQLException.class)
     public Response<Object> forgotPassword(LoginUserDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             String newToken = createToken(6);
@@ -207,7 +208,7 @@ public class AuthenticationService {
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = SQLException.class)
     public Response<Object> updatePasswordWithToken(UpdatePasswordWithTokenDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
