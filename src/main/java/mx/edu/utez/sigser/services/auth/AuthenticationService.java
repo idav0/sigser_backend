@@ -14,11 +14,13 @@ import mx.edu.utez.sigser.utils.Response;
 import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class AuthenticationService {
     private final UserRepository userRepository;
 
@@ -44,6 +46,7 @@ public class AuthenticationService {
         this.userTypeRepository = userTypeRepository;
 
     }
+
 
     public Response<User> signup(RegisterUserDTO input, String userTypeName) {
         if (input.getEmail() == null || input.getPassword() == null || input.getName() == null || input.getLastname() == null || input.getPhone() == null) {
@@ -89,6 +92,7 @@ public class AuthenticationService {
         );
     }
 
+    @Transactional
     public Response<Object> updateNewUserPassword(UpdateNewUserPasswordDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
@@ -157,6 +161,7 @@ public class AuthenticationService {
         }
     }
 
+    @Transactional
     public Response<Object> forgotPassword(LoginUserDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             String newToken = createToken(6);
@@ -197,11 +202,12 @@ public class AuthenticationService {
                     null,
                     true,
                     400,
-                    "El registro no se encontró"
+                    "The email does not exist"
             );
         }
     }
 
+    @Transactional
     public Response<Object> updatePasswordWithToken(UpdatePasswordWithTokenDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
