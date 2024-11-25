@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -106,7 +107,7 @@ public class DeviceService {
         }
     }*/
 
-    @Transactional
+    @Transactional(rollbackFor = SQLException.class)
     public Response<Device> create(Device device) {
         if (this.deviceRepository.findBySerialNumber(device.getSerialNumber()).isEmpty()) {
             device.setDeviceType(this.deviceTypeRepository.findById(device.getDeviceType().getId()).orElse(null));

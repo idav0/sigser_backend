@@ -27,4 +27,12 @@ public class RepairStatus {
     @OneToOne(mappedBy = "repairStatus", cascade = CascadeType.ALL)
     @JsonIgnore
     private Repair repair;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
