@@ -69,7 +69,7 @@ public class Repair {
     @JsonIgnore
     private User technician;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="repair_status_id")
     private RepairStatus repairStatus;
 

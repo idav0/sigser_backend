@@ -135,11 +135,26 @@ public class RepairService {
     @Transactional(rollbackFor = Exception.class)
     public Response<byte[]> receivedStatus (Repair repair) throws WriterException {
         if(repairRepository.findAllByDeviceIdAndDifferentRepairStatusCollected(repair.getDevice().getId()).isEmpty()) {
+            if (repair.getClient().getId() != null && repair.getTechnician().getId() != null) {
+                repair.setClient(this.userRepository.findById(repair.getClient().getId()).orElse(null));
+                repair.setTechnician(this.userRepository.findById(repair.getTechnician().getId()).orElse(null));
+            } else {
+                return new Response<>(
+                        null,
+                        true,
+                        400,
+                        "Client or Technician not found"
+                );
+            }
+
             repair.setRepairStatus(this.repairStatusRepository.findById(1L).orElse(null));
             repair.setEntry_date(LocalDateTime.now());
             repair.setDevice(this.deviceRepository.findById(repair.getDevice().getId()).orElse(null));
 
+
+
             Repair newRepair = this.repairRepository.saveAndFlush(repair);
+
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(newRepair.toString(), BarcodeFormat.QR_CODE, 300, 300);

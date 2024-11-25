@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.edu.utez.sigser.models.device.Device;
 
+import java.util.List;
+
 @Entity
 @Table(name = "device_types")
 @AllArgsConstructor
@@ -24,9 +26,9 @@ public class DeviceType {
     private String name;
 
 
-    @OneToOne(mappedBy = "deviceType", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "deviceType", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Device device;
+    private List<Device> device;
 
     @Override
     public String toString() {

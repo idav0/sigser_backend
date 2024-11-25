@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mx.edu.utez.sigser.models.repair.Repair;
 
+import java.util.List;
+
 @Entity
 @Table(name = "repair_statuses")
 @AllArgsConstructor
@@ -24,9 +26,9 @@ public class RepairStatus {
     private String name;
 
 
-    @OneToOne(mappedBy = "repairStatus", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "repairStatus", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Repair repair;
+    private List<Repair> repair;
 
     @Override
     public String toString() {

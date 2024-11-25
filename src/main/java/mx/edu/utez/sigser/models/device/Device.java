@@ -33,7 +33,7 @@ public class Device {
     private String serialNumber;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "device_type_id")
     private DeviceType deviceType;
 
