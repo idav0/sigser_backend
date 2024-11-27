@@ -86,7 +86,7 @@ public class AuthenticationService {
         );
         //TODO : Send email with temporary password
         return new Response<>(
-                user,
+                this.userRepository.saveAndFlush(user),
                 false,
                 201,
                 "User created successfully"
@@ -280,9 +280,8 @@ public class AuthenticationService {
             return false;
         }
         boolean hasUppercase = !password.equals(password.toLowerCase());
-        boolean hasSpecial = !password.matches("[A-Za-z0-9]*");
         boolean hasNumber = password.matches(".*\\d.*");
-        return hasUppercase && hasSpecial && hasNumber;
+        return hasUppercase && hasNumber;
     }
 
 
