@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -43,5 +44,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
             nativeQuery = true
     )
     int updateNoNewUserByEmail(String email);
+
+    @Query(
+            value = "SELECT * FROM users WHERE user_type_id = 2",
+            nativeQuery = true
+    )
+    List<User> findAllAdmins();
+
+    @Query(
+            value = "SELECT * FROM users WHERE user_type_id = 3",
+            nativeQuery = true
+    )
+    List<User> findAllTechnicians();
+
+    @Query(
+            value = "SELECT * FROM users WHERE user_type_id = 4",
+            nativeQuery = true
+    )
+    List<User> findAllClients();
 
 }

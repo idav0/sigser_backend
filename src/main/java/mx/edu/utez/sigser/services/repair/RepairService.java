@@ -136,8 +136,21 @@ public class RepairService {
     public Response<byte[]> receivedStatus (Repair repair) throws WriterException {
         if(repairRepository.findAllByDeviceIdAndDifferentRepairStatusCollected(repair.getDevice().getId()).isEmpty()) {
             if (repair.getClient().getId() != null && repair.getTechnician().getId() != null) {
-                repair.setClient(this.userRepository.findById(repair.getClient().getId()).orElse(null));
-                repair.setTechnician(this.userRepository.findById(repair.getTechnician().getId()).orElse(null));
+                User client = this.userRepository.findById(repair.getClient().getId()).orElse(null);
+                User technician = this.userRepository.findById(repair.getTechnician().getId()).orElse(null);
+                assert client != null;
+                assert technician != null;
+                if(client.getUserType().getId() == 4 && technician.getUserType().getId() == 3) {
+                    repair.setClient(client);
+                    repair.setTechnician(technician);
+                } else {
+                    return new Response<>(
+                            null,
+                            true,
+                            400,
+                            "Client or Technician not found"
+                    );
+                }
             } else {
                 return new Response<>(
                         null,
