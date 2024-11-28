@@ -77,7 +77,7 @@ public class RepairService {
         if(client != null) {
             if(client.getUserType().getId() == 4) {
                 return new Response<>(
-                        this.repairRepository.findAllByUserId(clientId),
+                        this.repairRepository.findAllByClientId(clientId),
                         false,
                         200,
                         "OK"
@@ -107,7 +107,7 @@ public class RepairService {
         if(technician != null) {
             if(technician.getUserType().getId() == 3) {
                 return new Response<>(
-                        this.repairRepository.findAllByUserId(technicianId),
+                        this.repairRepository.findAllByTechnicianId(technicianId),
                         false,
                         200,
                         "OK"
