@@ -237,6 +237,7 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(3L).orElse(null));
                 repair.setDiagnostic_estimated_cost(dto.getDiagnostic_estimated_cost());
                 repair.setDiagnostic_observations(dto.getDiagnostic_observations());
+                repair.setDiagnostic_parts(dto.getDiagnostic_parts());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
