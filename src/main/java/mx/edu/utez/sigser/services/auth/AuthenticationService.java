@@ -87,7 +87,7 @@ public class AuthenticationService {
         );
         //TODO : Send email with temporary password
 
-        this.emailService.sendMail(new EmailDto(input.getEmail(), input.getName(), tmp_password, "","",""), "newUser");
+        this.emailService.sendMail(new EmailDto(input.getEmail(), input.getName(), "", "",tmp_password,""), "newUser");
         return new Response<>(
                 this.userRepository.saveAndFlush(user),
                 false,
