@@ -102,7 +102,7 @@ public class EmailService {
 
 
                 try {
-                    InputStream inputStream = new ClassPathResource("templates/TokenPassword.html").getInputStream();
+                    InputStream inputStream = new ClassPathResource("templates/NewAccount.html").getInputStream();
                     String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     // Leer el contenido del template HTML
 //                    Path path = Paths.get(templatePath2);
