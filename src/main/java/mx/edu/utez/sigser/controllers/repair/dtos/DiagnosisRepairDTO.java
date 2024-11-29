@@ -21,7 +21,7 @@ public class DiagnosisRepairDTO {
 
     private String diagnostic_parts;
 
-    @NotBlank(message = "Diagnostic estimated cost is required")
+    @NotNull(message = "Diagnostic estimated cost is required")
     private double diagnostic_estimated_cost;
 
 
