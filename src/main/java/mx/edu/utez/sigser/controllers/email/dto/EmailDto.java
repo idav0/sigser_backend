@@ -12,6 +12,10 @@ import lombok.Setter;
 @Getter
 public class EmailDto {
     private String email;
+    private String nombre;
     private String token;
+    private String equipo;
+    private String tmpcontra;
+    private String descripcion;
 
 }

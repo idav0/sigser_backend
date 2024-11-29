@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seguimiento de Equipo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap');
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9fafc;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #ffffff;
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      background: linear-gradient(45deg, #003366, #0056b3);
+      color: white;
+      padding: 30px 20px;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .header img {
+      display: block;
+      margin: 0 auto 15px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 30px 20px;
+      color: #333333;
+      line-height: 1.8;
+    }
+
+    .content p {
+      margin: 16px 0;
+    }
+
+    .tracker-container {
+      margin-top: 30px;
+      padding-left: 50px;
+      border-left: 3px solid #e9f5ff;
+    }
+
+    .tracker-step {
+      position: relative;
+      margin-bottom: 25px;
+    }
+
+    .tracker-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .tracker-icon {
+      position: absolute;
+      top: 0;
+      left: -32px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #e9f5ff;
+      border: 3px solid #0056b3;
+    }
+
+    .tracker-step.completed .tracker-icon {
+      background-color: #0056b3;
+      border-color: #0056b3;
+    }
+
+    .tracker-step.completed .tracker-label {
+      color: #0056b3;
+      font-weight: 600;
+    }
+
+    .tracker-label {
+      margin-left: 12px;
+      font-size: 15px;
+      color: #666666;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      color: #666666;
+      padding: 15px 20px;
+      background-color: #f8f9fa;
+      border-top: 1px solid #e6e6e6;
+    }
+
+    .footer p {
+      margin: 5px 0;
+    }
+
+    .footer a {
+      color: #0056b3;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="email-container">
+  <!-- Header -->
+  <div class="header">
+    <img src="cid:logo" alt="RepairApp Logo" width="80" />
+    <h1>Seguimiento de Equipo</h1>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <p>Estimado/a <strong>{{nombre}}</strong>,</p>
+    <p>
+      A continuación, encontrarás el estado actual de tu equipo en el
+      proceso de seguimiento:
+    </p>
+    <div class="tracker-container">
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">Ingresado</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">Diagnóstico</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">Cotización</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">En espera de aceptación del cliente</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">En espera de piezas</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">En reparación</div>
+      </div>
+      <div class="tracker-step completed">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">Listo para entrega</div>
+      </div>
+      <div class="tracker-step">
+        <div class="tracker-icon"></div>
+        <div class="tracker-label">Entregado</div>
+      </div>
+    </div>
+    <p
+            style="
+            background: #e9f5ff;
+            border-left: 5px solid #0056b3;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0056b3;
+          "
+    >
+      <strong>Estado actual:</strong> Listo para entrega
+    </p>
+    <p
+            style="
+            background: #e9f5ff;
+            border-left: 5px solid #0056b3;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0056b3;
+          "
+    >
+      <strong>Equipo:</strong> {{equipo}}
+    </p>
+    <p>
+      Te mantendremos informado sobre cualquier cambio en el estado del
+      equipo. Gracias por tu confianza en nuestro servicio.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>&copy; 2024 RepairApp. Todos los derechos reservados.</p>
+  </div>
+</div>
+</body>
+</html>

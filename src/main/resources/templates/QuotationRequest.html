@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenida</title>
+    <meta charset="UTF-8">
+    <title><!DOCTYPE html>
+      <html lang="es">
+      <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Cotización Enviada</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap');
 
@@ -43,24 +47,29 @@
       color: #333333;
       line-height: 1.8;
     }
-    .content h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #003366;
-      margin-bottom: 10px;
-    }
     .content p {
       margin: 16px 0;
     }
-    .temporary-password {
+    .quote {
+      background-color: #e9f5ff;
+      border-left: 5px solid #0056b3;
+      padding: 15px 20px;
+      margin: 20px 0;
+      font-size: 16px;
+      color: #003366;
       font-weight: 700;
-      font-size: 20px;
-      color: #0056b3;
-      background: #e9f5ff;
-      padding: 10px 15px;
       border-radius: 8px;
-      display: inline-block;
-      margin: 16px 0;
+    }
+    .warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
     }
     .cta-button {
       display: inline-block;
@@ -98,22 +107,46 @@
 </head>
 <body>
 <div class="email-container">
+  <!-- Header -->
   <div class="header">
-    <img src="cid:logo" alt="RepairApp Logo" class="logo" width="80">
-    <h1>Bienvenido a RepairApp</h1>
+    <img src="[Logo URL]" alt="RepairApp Logo" class="logo" width="80" />
+    <h1>Cotización Enviada</h1>
   </div>
 
+  <!-- Content -->
   <div class="content">
-    <h2>Hola, {{nombre}}</h2>
-    <p>Gracias por registrarte en <strong>RepairApp</strong>. Estamos encantados de tenerte con nosotros. Por favor, utiliza la siguiente contraseña temporal para iniciar sesión en tu cuenta:</p>
-    <p class="temporary-password">{{tmpcontra}}</p>
-    <p>Por motivos de seguridad, te recomendamos cambiar tu contraseña inmediatamente después de iniciar sesión.</p>
-    <p>Atentamente,<br><strong>El equipo de RepairApp</strong></p>
+    <p>Estimado/a <strong>{{nombre}}</strong>,</p>
+    <p>
+      Te notificamos que hemos enviado una cotización correspondiente a tu
+      solicitud. A continuación, encontrarás el detalle de la cotización:
+    </p>
+    <div class="quote">
+      <p><strong>Cotización:</strong> {{monto}}</p>
+      <p>
+        <strong>Descripción:</strong> {{descripcion}}
+      </p>
+      <p>
+        <strong>Equipo:</strong> {{equipo}}
+      </p>
+    </div>
+    <div class="warning">
+      Para continuar con el proceso, por favor ingresa a la aplicación y acepta la cotización antes de los próximos 5 días.
+    </div>
+    <p>
+      Gracias por tu preferencia,<br /><strong>El equipo de RepairApp</strong>
+    </p>
   </div>
 
+  <!-- Footer -->
   <div class="footer">
     <p>&copy; 2024 RepairApp. Todos los derechos reservados.</p>
   </div>
 </div>
+</body>
+</html>
+</title>
+</head>
+<body>
+
 </body>
 </html>

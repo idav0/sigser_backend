@@ -51,7 +51,7 @@ public class AuthenticationService {
 
     @Transactional(rollbackFor = SQLException.class)
     public Response<User> signup(RegisterUserDTO input, String userTypeName) {
-        if (input.getEmail() == null || input.getPassword() == null || input.getName() == null || input.getLastname() == null || input.getPhone() == null) {
+        if (input.getEmail() == null || input.getName() == null || input.getLastname() == null || input.getPhone() == null) {
             return new Response<>(
                     null,
                     true,
@@ -86,6 +86,8 @@ public class AuthenticationService {
                 userType
         );
         //TODO : Send email with temporary password
+
+        this.emailService.sendMail(new EmailDto(input.getEmail(), input.getName(), tmp_password, "","",""), "newUser");
         return new Response<>(
                 this.userRepository.saveAndFlush(user),
                 false,
@@ -172,7 +174,7 @@ public class AuthenticationService {
             if (userRepository.updateUserTokenTmpByEmail(newToken, dto.getEmail()) > 0) {
                 lista.add("Token updated successfully");
 
-                if (this.emailService.sendMail(new EmailDto(dto.getEmail(), newToken), "forgotPassword")) {
+                if (this.emailService.sendMail(new EmailDto(dto.getEmail(), newToken, "","","",""), "forgot-password")) {
                     //TODO : Verify if email is sending correctly
                     lista.add("Email sent successfully");
                     return new Response<>(
