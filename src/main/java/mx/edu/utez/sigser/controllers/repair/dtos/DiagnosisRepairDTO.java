@@ -1,6 +1,7 @@
 package mx.edu.utez.sigser.controllers.repair.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class DiagnosisRepairDTO {
 
-    @NotBlank(message = "Id is required")
+    @NotNull(message = "Id is required")
     private Long id;
 
     @NotBlank(message = "Diagnostic observations is required")
