@@ -8,6 +8,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +73,7 @@ public class EmailService {
         }
     }
 
-    public String generateEmailContent(EmailDto email, String type) {
+    public String generateEmailContent(EmailDto email, String type) throws IOException {
         switch (type) {
             case "forgotPassword":
 
@@ -97,11 +99,14 @@ public class EmailService {
                 }
 
             case "newUser":
-                String templatePath2 = "src/main/resources/templates/NewAccount.html";
+
+
                 try {
+                    InputStream inputStream = new ClassPathResource("templates/TokenPassword.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                     // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath2);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+//                    Path path = Paths.get(templatePath2);
+//                    String content = Files.readString(path, StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{nombre}}", email.getNombre());
