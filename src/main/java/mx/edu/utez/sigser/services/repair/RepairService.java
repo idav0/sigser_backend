@@ -5,6 +5,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import mx.edu.utez.sigser.controllers.email.dto.EmailDto;
 import mx.edu.utez.sigser.controllers.repair.dtos.DiagnosisRepairDTO;
 import mx.edu.utez.sigser.controllers.repair.dtos.QuotationRepairDTO;
 import mx.edu.utez.sigser.controllers.repair.dtos.RepairRepairDTO;
@@ -14,6 +15,7 @@ import mx.edu.utez.sigser.models.repair.RepairRepository;
 import mx.edu.utez.sigser.models.repair_status.RepairStatusRepository;
 import mx.edu.utez.sigser.models.user.User;
 import mx.edu.utez.sigser.models.user.UserRepository;
+import mx.edu.utez.sigser.utils.EmailService;
 import mx.edu.utez.sigser.utils.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,14 +33,16 @@ public class RepairService {
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
     private final RepairStatusRepository repairStatusRepository;
+    private final EmailService emailService;
 
 
 
-    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository) {
+    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository, EmailService emailService) {
         this.repairRepository = repairRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
         this.repairStatusRepository = repairStatusRepository;
+        this.emailService = emailService;
     }
 
 
@@ -130,7 +134,6 @@ public class RepairService {
         }
     }
 
-    //TODO: Send Email to client when the repair process starts
 
     @Transactional(rollbackFor = Exception.class)
     public Response<byte[]> receivedStatus (Repair repair) throws WriterException {
@@ -167,6 +170,8 @@ public class RepairService {
 
 
             Repair newRepair = this.repairRepository.saveAndFlush(repair);
+
+            this.emailService.sendMail(new EmailDto(newRepair.getClient().getEmail(), newRepair.getClient().getName(), "", newRepair.getDevice().toStringEmail() , null, null,0), "changeStatus-received");
 
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
@@ -205,6 +210,9 @@ public class RepairService {
             Repair repair = this.repairRepository.findById(id).orElse(null);
             if(repair.getRepairStatus().getId() == 1) {
                 repair.setRepairStatus(this.repairStatusRepository.findById(2L).orElse(null));
+                this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, null,0), "changeStatus-diagnosis");
+
+
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -238,6 +246,9 @@ public class RepairService {
                 repair.setDiagnostic_estimated_cost(dto.getDiagnostic_estimated_cost());
                 repair.setDiagnostic_observations(dto.getDiagnostic_observations());
                 repair.setDiagnostic_parts(dto.getDiagnostic_parts());
+
+                this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, null,0), "changeStatus-quotation");
+
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -273,7 +284,8 @@ public class RepairService {
                 double total_price = subtotal + (subtotal * (dto.getProfit() * 0.01));
                 repair.setTotal_price(total_price);
 
-                //TODO: Send Email to client with the quotation and request for approval
+                this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, repair.getDiagnostic_observations(), total_price), "changeStatus-quotation");
+                this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcustomerapproval");
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -303,10 +315,13 @@ public class RepairService {
         if(this.repairRepository.existsById(id)) {
             Repair repair = this.repairRepository.findById(id).orElse(null);
             if(repair.getRepairStatus().getId() == 4) {
-                long newStatus = repair.getTotal_price() > 0 ? 5L : 6L;
+                long newStatus = repair.getDiagnostic_parts().isEmpty() ? 6L : 5L;
                 repair.setRepairStatus(this.repairStatusRepository.findById(newStatus).orElse(null));
-                if(newStatus == 6) {
+                if(newStatus == 5) {
+                    this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforparts");
+                } else {
                     repair.setRepair_start(LocalDateTime.now());
+                    this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-repairing");
                 }
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
@@ -339,6 +354,7 @@ public class RepairService {
             if(repair.getRepairStatus().getId() == 4) {
                 repair.setRepairStatus(this.repairStatusRepository.findById(7L).orElse(null));
                 repair.setPaid(true);
+                this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcollection");
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -370,6 +386,7 @@ public class RepairService {
             if(repair.getRepairStatus().getId() == 5) {
                 repair.setRepairStatus(this.repairStatusRepository.findById(6L).orElse(null));
                 repair.setRepair_start(LocalDateTime.now());
+                this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-repairing");
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -409,6 +426,7 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(7L).orElse(null));
                 repair.setRepair_observations(dto.getRepair_observations());
                 repair.setRepair_end(LocalDateTime.now());
+                this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcollection");
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -440,6 +458,7 @@ public class RepairService {
             if(repair.getRepairStatus().getId() == 7) {
                 if(repair.isPaid()) {
                     repair.setRepairStatus(this.repairStatusRepository.findById(8L).orElse(null));
+                    this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-collected");
                     return new Response<>(
                             this.repairRepository.saveAndFlush(repair),
                             false,

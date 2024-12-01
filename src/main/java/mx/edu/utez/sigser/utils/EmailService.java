@@ -61,9 +61,9 @@ public class EmailService {
                     break;
             }
 
-            helper.addInline("logo", new ClassPathResource("static/images/Logo.png"));
             helper.setTo(email.getEmail());
             helper.setText(generateEmailContent(email, type), true);
+            helper.addInline("logoImage", new ClassPathResource("static/images/Logo.png"));
 
             mailSender.send(message);
             return true;
@@ -77,13 +77,10 @@ public class EmailService {
         switch (type) {
             case "forgotPassword":
 
-                String templatePath = "src/main/resources/templates/TokenPassword.html";
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/TokenPassword.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
-                    // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{email}}", email.getEmail());
                     content = content.replace("{{dig1}}", String.valueOf(email.getToken().charAt(0)));
                     content = content.replace("{{dig2}}", String.valueOf(email.getToken().charAt(1)));
@@ -95,20 +92,15 @@ public class EmailService {
                     return content;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return ""; // Manejar el error apropiadamente
+                    return "";
                 }
 
             case "newUser":
 
-
                 try {
                     InputStream inputStream = new ClassPathResource("templates/NewAccount.html").getInputStream();
                     String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-                    // Leer el contenido del template HTML
-//                    Path path = Paths.get(templatePath2);
-//                    String content = Files.readString(path, StandardCharsets.UTF_8);
 
-                    // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{nombre}}", email.getNombre());
                     content = content.replace("{{tmpcontra}}", email.getTmpcontra());
 
@@ -119,11 +111,11 @@ public class EmailService {
                 }
 
             case "changeStatus-received":
-                String templatePath3 = "src/main/resources/templates/StatusReceived.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath3);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusReceived.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -132,32 +124,29 @@ public class EmailService {
                     return content;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return ""; // Manejar el error apropiadamente
+                    return "";
                 }
 
             case "changeStatus-diagnosis":
-                String templatePath4 = "src/main/resources/templates/StatusDiagnosis.html";
-                try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath4);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
 
-                    // Reemplazar los marcadores con los datos específicos
+                try {
+                    InputStream inputStream = new ClassPathResource("templates/StatusDiagnosis.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
                     content = content.replace("{{equipo}}", email.getEquipo());
                     content = content.replace("{{nombre}}", email.getNombre());
 
                     return content;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return ""; // Manejar el error apropiadamente
+                    return "";
                 }
 
             case "changeStatus-quotation":
-                String templatePath5 = "src/main/resources/templates/QuotationRequest.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath5);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusQuotation.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{monto}}", email.getEquipo());
@@ -172,11 +161,10 @@ public class EmailService {
                 }
 
             case "changeStatus-waitingforcustomerapproval":
-                String templatePath6 = "src/main/resources/templates/StatusWaitingForCustomerApproval.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath6);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusWaitingForCustomerApproval.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -189,11 +177,11 @@ public class EmailService {
                 }
 
             case "changeStatus-waitingforparts":
-                String templatePath7 = "src/main/resources/templates/StatusWaitingForParts.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath7);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+
+                    InputStream inputStream = new ClassPathResource("templates/StatusWaitingForParts.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -206,11 +194,10 @@ public class EmailService {
                 }
 
             case "changeStatus-repairing":
-                String templatePath8 = "src/main/resources/templates/StatusRepairing.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath8);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusRepairing.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -223,11 +210,10 @@ public class EmailService {
                 }
 
             case "changeStatus-waitingforcollection":
-                String templatePath9 = "src/main/resources/templates/StatusWaitingForCollection.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath9);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusWaitingForCollection.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -240,11 +226,10 @@ public class EmailService {
                 }
 
             case "changeStatus-repaired":
-                String templatePath10 = "src/main/resources/templates/StatusRepaired.html";
+
                 try {
-                    // Leer el contenido del template HTML
-                    Path path = Paths.get(templatePath10);
-                    String content = Files.readString(path, StandardCharsets.UTF_8);
+                    InputStream inputStream = new ClassPathResource("templates/StatusRepaired.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -264,22 +249,3 @@ public class EmailService {
     }
 }
 
-
-/*
-
-String templatePath = "src/main/resources/templates/TokenPassword.html";
-        try {
-            // Leer el contenido del template HTML
-            Path path = Paths.get(templatePath);
-            String content = Files.readString(path, StandardCharsets.UTF_8);
-
-            // Reemplazar los marcadores con los datos específicos
-            content = content.replace("{{nombre}}", email.getEmail());
-            content = content.replace("{{comentarios}}", email.getToken());
-
-            return content;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ""; // Manejar el error apropiadamente
-        }
- */

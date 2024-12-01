@@ -22,7 +22,6 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    //TODO : Test all this endpoints once the email templates are ready
 
     public AuthenticationController(JWTService jwtService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;

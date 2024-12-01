@@ -52,6 +52,13 @@ public class Device {
                 '}';
     }
 
+    public String toStringEmail() {
+        return  "Modelo='" + model + '\'' +
+                ", Marca='" + brand + '\'' +
+                ", Numero de Serie='" + serialNumber + '\'' +
+                ", Tipo de Dispositivo=" + deviceType.toString();
+    }
+
 
 
 }

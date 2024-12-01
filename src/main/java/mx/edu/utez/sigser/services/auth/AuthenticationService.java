@@ -85,9 +85,8 @@ public class AuthenticationService {
                 passwordEncoder.encode(tmp_password),
                 userType
         );
-        //TODO : Send email with temporary password
 
-        this.emailService.sendMail(new EmailDto(input.getEmail(), input.getName(), "", "",tmp_password,""), "newUser");
+        this.emailService.sendMail(new EmailDto(input.getEmail(), input.getName(), "", "",tmp_password,"",0), "newUser");
         return new Response<>(
                 this.userRepository.saveAndFlush(user),
                 false,
@@ -174,8 +173,7 @@ public class AuthenticationService {
             if (userRepository.updateUserTokenTmpByEmail(newToken, dto.getEmail()) > 0) {
                 lista.add("Token updated successfully");
 
-                if (this.emailService.sendMail(new EmailDto(dto.getEmail(), newToken, "","","",""), "forgot-password")) {
-                    //TODO : Verify if email is sending correctly
+                if (this.emailService.sendMail(new EmailDto(dto.getEmail(), "", newToken,"","","",0), "forgotPassword")) {
                     lista.add("Email sent successfully");
                     return new Response<>(
                             lista.toArray(),

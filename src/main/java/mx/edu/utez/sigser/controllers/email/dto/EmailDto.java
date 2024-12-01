@@ -17,5 +17,6 @@ public class EmailDto {
     private String equipo;
     private String tmpcontra;
     private String descripcion;
+    private double monto;
 
 }
