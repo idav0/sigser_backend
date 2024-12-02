@@ -142,6 +142,7 @@ public class RepairService {
         }
     }
 
+    //TODO: Implement MQTT notification for every user in the repair process using topic like /sigser/notifications/admin/repair/{repairId}
 
     @Transactional(rollbackFor = Exception.class)
     public Response<byte[]> receivedStatus (Repair repair) throws WriterException {
@@ -180,7 +181,9 @@ public class RepairService {
             Repair newRepair = this.repairRepository.saveAndFlush(repair);
 
             this.emailService.sendMail(new EmailDto(newRepair.getClient().getEmail(), newRepair.getClient().getName(), "", newRepair.getDevice().toStringEmail() , null, null,0), "changeStatus-received");
-
+            this.mqttService.sendNotificationAdmin("Nuevo dispositivo ingresado al taller. Número de reparación: " + newRepair.getId());
+            this.mqttService.sendNotificationTechnician("Nuevo dispositivo ingresado al taller y asignado a ti. Número de reparación: " + newRepair.getId(),  "/" + newRepair.getTechnician().getId());
+            this.mqttService.sendNotificationClient("Tu dispositivo ha sido ingresado al taller. Dispositivo : " + newRepair.getDevice().getBrand() + " - " + newRepair.getDevice().getModel() , "/" + newRepair.getClient().getId());
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(newRepair.toString(), BarcodeFormat.QR_CODE, 300, 300);
@@ -210,7 +213,6 @@ public class RepairService {
         }
     }
 
-    //TODO: Send Email to client when the repair process steps to the next status
 
     @Transactional(rollbackFor = Exception.class)
     public Response<Repair> startDiagnosisStatus (Long id) {
@@ -219,6 +221,8 @@ public class RepairService {
             if(repair.getRepairStatus().getId() == 1) {
                 repair.setRepairStatus(this.repairStatusRepository.findById(2L).orElse(null));
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, null,0), "changeStatus-diagnosis");
+
+                this.mqttService.sendNotificationClient("Tu dispositivo está siendo diagnosticado. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
 
 
                 return new Response<>(
@@ -269,6 +273,8 @@ public class RepairService {
                 repair.setDiagnosticImage(responseImages.getData());
 
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, null,0), "changeStatus-quotation");
+                this.mqttService.sendNotificationAdmin("Nueva reparación lista para cotización. Número de reparación: " + repair.getId());
+                this.mqttService.sendNotificationClient("La reparación de tu dispositivo está siendo realizada. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
 
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
@@ -307,6 +313,7 @@ public class RepairService {
 
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, repair.getDiagnostic_observations(), total_price), "changeStatus-quotation2");
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcustomerapproval");
+                this.mqttService.sendNotificationClient("La cotización de tu dispositivo está lista, por favor revisala dentro de los próximos 5 días. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -340,10 +347,14 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(newStatus).orElse(null));
                 if(newStatus == 5) {
                     this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforparts");
+                    this.mqttService.sendNotificationClient("Tu dispositivo está en espera de las partes necesarias para la reparación. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 } else {
                     repair.setRepair_start(LocalDateTime.now());
                     this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-repairing");
+                    this.mqttService.sendNotificationClient("Tu dispositivo está siendo reparado. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 }
+                this.mqttService.sendNotificationAdmin("El cliente ha aprobado la cotización de la reparación. Número de reparación: " + repair.getId());
+                this.mqttService.sendNotificationTechnician("El cliente ha aprobado la cotización de la reparación. Número de reparación: " + repair.getId(), "/" + repair.getTechnician().getId());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -376,6 +387,9 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(7L).orElse(null));
                 repair.setPaid(true);
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcollection");
+                this.mqttService.sendNotificationAdmin("El cliente ha rechazado la cotización de la reparación. Número de reparación: " + repair.getId());
+                this.mqttService.sendNotificationTechnician("El cliente ha rechazado la cotización de la reparación. Número de reparación: " + repair.getId(), "/" + repair.getTechnician().getId());
+                this.mqttService.sendNotificationClient("Has rechazado la cotización para el dispositivo, por favor acude al centro de reparación para su entrega. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -408,6 +422,7 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(6L).orElse(null));
                 repair.setRepair_start(LocalDateTime.now());
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-repairing");
+                this.mqttService.sendNotificationClient("Tu dispositivo está siendo reparado. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -462,6 +477,8 @@ public class RepairService {
                 repair.setRepairImage(responseImages.getData());
 
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcollection");
+                this.mqttService.sendNotificationAdmin("La reparación ha finalizado. Número de reparación: " + repair.getId());
+                this.mqttService.sendNotificationClient("Tu dispositivo ha sido reparado, por favor acude al centro de reparación para su entrega. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),
                         false,
@@ -492,9 +509,10 @@ public class RepairService {
             Repair repair = this.repairRepository.findById(id).orElse(null);
             if(repair.getRepairStatus().getId() == 7) {
                 if(repair.isPaid()) {
-                    this.mqttService.sendNotificationAdmin("Prueba de admin notificacion mqtt");
                     repair.setRepairStatus(this.repairStatusRepository.findById(8L).orElse(null));
                     this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-collected");
+                    this.mqttService.sendNotificationAdmin("El cliente ha recogido el dispositivo. Número de reparación: " + repair.getId());
+                    this.mqttService.sendNotificationClient("Has recogido tu dispositivo, gracias por tu preferencia. Dispositivo : " + repair.getDevice().getBrand() + " - " + repair.getDevice().getModel() , "/" + repair.getClient().getId());
                     return new Response<>(
                             this.repairRepository.saveAndFlush(repair),
                             false,

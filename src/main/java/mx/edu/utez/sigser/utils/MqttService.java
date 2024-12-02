@@ -15,6 +15,8 @@ public class MqttService {
         this.mqttClient = mqttClient;
     }
 
+    //TODO : Implement the method to send a notification to every user in the repair process
+
 
     public void sendNotificationAdmin(String message) {
         try {
@@ -27,9 +29,9 @@ public class MqttService {
         }
     }
 
-    public void sendNotificationTechnician(String message) {
+    public void sendNotificationTechnician(String message, String topicVar) {
         try {
-            String topic = "sigser/notifications/technician";
+            String topic = "sigser/notifications/technician" + topicVar;
             MqttMessage mqttMessage = new MqttMessage(message.getBytes());
             mqttClient.publish(topic, mqttMessage);
             System.out.println("Mensaje enviado a MQTT: " + message);
@@ -38,9 +40,9 @@ public class MqttService {
         }
     }
 
-    public void sendNotificationClient(String message) {
+    public void sendNotificationClient(String message , String topicVar) {
         try {
-            String topic = "sigser/notifications/client";
+            String topic = "sigser/notifications/client" + topicVar;
             MqttMessage mqttMessage = new MqttMessage(message.getBytes());
             mqttClient.publish(topic, mqttMessage);
             System.out.println("Mensaje enviado a MQTT: " + message);
