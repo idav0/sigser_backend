@@ -1,4 +1,4 @@
-package mx.edu.utez.centromedicointegradoraback.controllers.image;
+package mx.edu.utez.sigser.controllers.image;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

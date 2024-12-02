@@ -54,6 +54,7 @@ public class ImageService {
                     Files.write(imagePathPerImage, imageBytes);
 
                     repairImage.setName(imageName);
+                    repairImage.setRepair(this.repairRepository.findById(repairId).orElse(null));
                     RepairImage repairImageSaved = this.repairImageRepository.saveAndFlush(repairImage);
                     imagesSaved.add(repairImageSaved);
                 } catch (IOException e) {
@@ -107,6 +108,7 @@ public class ImageService {
                     Files.write(imagePathPerImage, imageBytes);
 
                     diagnosticImage.setName(imageName);
+                    diagnosticImage.setRepair(this.repairRepository.findById(repairId).orElse(null));
                     DiagnosticImage diagnosticImageSaved = this.diagnosticImageRepository.saveAndFlush(diagnosticImage);
                     imagesSaved.add(diagnosticImageSaved);
 
