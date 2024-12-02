@@ -44,6 +44,9 @@ public class EmailService {
                 case "changeStatus-quotation":
                     helper.setSubject("SIGSER - Actualización de estado de reparación - En Cotización");
                     break;
+                case "changeStatus-quotation2":
+                    helper.setSubject("SIGSER - Cotización de reparación, por favor revisar");
+                    break;
                 case "changeStatus-waitingforcustomerapproval":
                     helper.setSubject("SIGSER - Actualización de estado de reparación - En Espera de aceptación del cliente");
                     break;
@@ -56,7 +59,7 @@ public class EmailService {
                 case "changeStatus-waitingforcollection":
                     helper.setSubject("SIGSER - Actualización de estado de reparación - Listo para Entrega");
                     break;
-                case "changeStatus-repaired":
+                case "changeStatus-collected":
                     helper.setSubject("SIGSER - Actualización de estado de reparación - Entregado");
                     break;
             }
@@ -149,7 +152,24 @@ public class EmailService {
                     String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
 
                     // Reemplazar los marcadores con los datos específicos
-                    content = content.replace("{{monto}}", email.getEquipo());
+                    content = content.replace("{{nombre}}", email.getNombre());
+                    content = content.replace("{{equipo}}", email.getEquipo());
+
+                    return content;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ""; // Manejar el error apropiadamente
+                }
+
+            case "changeStatus-quotation2":
+
+                try {
+                    InputStream inputStream = new ClassPathResource("templates/QuotationRequest.html").getInputStream();
+                    String content = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+                    // Reemplazar los marcadores con los datos específicos
+
+                    content = content.replace("{{monto}}", String.valueOf(email.getMonto()));
                     content = content.replace("{{nombre}}", email.getNombre());
                     content = content.replace("{{descripcion}}", email.getDescripcion());
                     content = content.replace("{{equipo}}", email.getEquipo());
@@ -225,7 +245,7 @@ public class EmailService {
                     return ""; // Manejar el error apropiadamente
                 }
 
-            case "changeStatus-repaired":
+            case "changeStatus-collected":
 
                 try {
                     InputStream inputStream = new ClassPathResource("templates/StatusRepaired.html").getInputStream();

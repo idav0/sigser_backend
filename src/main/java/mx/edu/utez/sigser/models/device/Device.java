@@ -56,7 +56,7 @@ public class Device {
         return  "Modelo='" + model + '\'' +
                 ", Marca='" + brand + '\'' +
                 ", Numero de Serie='" + serialNumber + '\'' +
-                ", Tipo de Dispositivo=" + deviceType.toString();
+                ", Tipo de Dispositivo='" + deviceType.getName() + '\'';
     }
 
 
