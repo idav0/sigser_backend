@@ -19,6 +19,7 @@ import mx.edu.utez.sigser.models.user.User;
 import mx.edu.utez.sigser.models.user.UserRepository;
 import mx.edu.utez.sigser.utils.EmailService;
 import mx.edu.utez.sigser.utils.ImageService;
+import mx.edu.utez.sigser.utils.MqttService;
 import mx.edu.utez.sigser.utils.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,16 +39,18 @@ public class RepairService {
     private final RepairStatusRepository repairStatusRepository;
     private final EmailService emailService;
     private final ImageService imageService;
+    private final MqttService mqttService;
 
 
 
-    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository, EmailService emailService, ImageService imageService) {
+    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository, EmailService emailService, ImageService imageService, MqttService mqttService) {
         this.repairRepository = repairRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
         this.repairStatusRepository = repairStatusRepository;
         this.emailService = emailService;
         this.imageService = imageService;
+        this.mqttService = mqttService;
     }
 
 
@@ -489,6 +492,7 @@ public class RepairService {
             Repair repair = this.repairRepository.findById(id).orElse(null);
             if(repair.getRepairStatus().getId() == 7) {
                 if(repair.isPaid()) {
+                    this.mqttService.sendNotificationAdmin("Prueba de admin notificacion mqtt");
                     repair.setRepairStatus(this.repairStatusRepository.findById(8L).orElse(null));
                     this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-collected");
                     return new Response<>(
