@@ -1,6 +1,7 @@
 package mx.edu.utez.sigser.models.user;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
@@ -56,9 +57,11 @@ public class User implements UserDetails {
 
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Repair> repairsClient;
 
     @OneToMany(mappedBy = "technician", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Repair> repairsTechnician;
 
 

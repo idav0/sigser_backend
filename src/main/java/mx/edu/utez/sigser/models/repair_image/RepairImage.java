@@ -20,6 +20,9 @@ public class RepairImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String name;
+
 
     @ManyToOne
     @JoinColumn(name = "repair_id")

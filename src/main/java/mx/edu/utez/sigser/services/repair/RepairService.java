@@ -10,12 +10,15 @@ import mx.edu.utez.sigser.controllers.repair.dtos.DiagnosisRepairDTO;
 import mx.edu.utez.sigser.controllers.repair.dtos.QuotationRepairDTO;
 import mx.edu.utez.sigser.controllers.repair.dtos.RepairRepairDTO;
 import mx.edu.utez.sigser.models.device.DeviceRepository;
+import mx.edu.utez.sigser.models.diagnostic_image.DiagnosticImage;
 import mx.edu.utez.sigser.models.repair.Repair;
 import mx.edu.utez.sigser.models.repair.RepairRepository;
+import mx.edu.utez.sigser.models.repair_image.RepairImage;
 import mx.edu.utez.sigser.models.repair_status.RepairStatusRepository;
 import mx.edu.utez.sigser.models.user.User;
 import mx.edu.utez.sigser.models.user.UserRepository;
 import mx.edu.utez.sigser.utils.EmailService;
+import mx.edu.utez.sigser.utils.ImageService;
 import mx.edu.utez.sigser.utils.Response;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,15 +37,17 @@ public class RepairService {
     private final DeviceRepository deviceRepository;
     private final RepairStatusRepository repairStatusRepository;
     private final EmailService emailService;
+    private final ImageService imageService;
 
 
 
-    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository, EmailService emailService) {
+    public RepairService(RepairRepository repairRepository, UserRepository userRepository, DeviceRepository deviceRepository, RepairStatusRepository repairStatusRepository, EmailService emailService, ImageService imageService) {
         this.repairRepository = repairRepository;
         this.userRepository = userRepository;
         this.deviceRepository = deviceRepository;
         this.repairStatusRepository = repairStatusRepository;
         this.emailService = emailService;
+        this.imageService = imageService;
     }
 
 
@@ -246,6 +251,19 @@ public class RepairService {
                 repair.setDiagnostic_estimated_cost(dto.getDiagnostic_estimated_cost());
                 repair.setDiagnostic_observations(dto.getDiagnostic_observations());
                 repair.setDiagnostic_parts(dto.getDiagnostic_parts());
+                Response<List<DiagnosticImage>> responseImages = this.imageService.SaveDiagnosticImage(dto.getDiagnostic_images(), repair.getId());
+
+                if(responseImages.isError()) {
+                    return new Response<>(
+                            null,
+                            true,
+                            400,
+                            "Error saving images"
+                    );
+                }
+
+
+                repair.setDiagnosticImage(responseImages.getData());
 
                 this.emailService.sendMail(new EmailDto(repair.getClient().getEmail(), repair.getClient().getName(), "", repair.getDevice().toStringEmail() , null, null,0), "changeStatus-quotation");
 
@@ -426,6 +444,20 @@ public class RepairService {
                 repair.setRepairStatus(this.repairStatusRepository.findById(7L).orElse(null));
                 repair.setRepair_observations(dto.getRepair_observations());
                 repair.setRepair_end(LocalDateTime.now());
+
+                Response<List<RepairImage>> responseImages = this.imageService.SaveRepairImage(dto.getRepair_images(), repair.getId());
+
+                if(responseImages.isError()) {
+                    return new Response<>(
+                            null,
+                            true,
+                            400,
+                            "Error saving images"
+                    );
+                }
+
+                repair.setRepairImage(responseImages.getData());
+
                 this.emailService.sendMail(new EmailDto(repair.getTechnician().getEmail(), repair.getTechnician().getName(), "", repair.getDevice().toStringEmail() , null, "", 0), "changeStatus-waitingforcollection");
                 return new Response<>(
                         this.repairRepository.saveAndFlush(repair),

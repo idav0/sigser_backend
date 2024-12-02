@@ -61,12 +61,10 @@ public class Repair {
 
     @ManyToOne
     @JoinColumn(name="client_id")
-    @JsonIgnore
     private User client;
 
     @ManyToOne
     @JoinColumn(name="technician_id")
-    @JsonIgnore
     private User technician;
 
     @ManyToOne
