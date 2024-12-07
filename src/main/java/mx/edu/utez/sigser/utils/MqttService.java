@@ -15,8 +15,6 @@ public class MqttService {
         this.mqttClient = mqttClient;
     }
 
-    //TODO : Implement the method to send a notification to every user in the repair process
-
 
     public void sendNotificationAdmin(String message) {
         try {

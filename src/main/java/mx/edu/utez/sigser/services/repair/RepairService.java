@@ -142,7 +142,6 @@ public class RepairService {
         }
     }
 
-    //TODO: Implement MQTT notification for every user in the repair process using topic like /sigser/notifications/admin/repair/{repairId}
 
     @Transactional(rollbackFor = Exception.class)
     public Response<byte[]> receivedStatus (Repair repair) throws WriterException {
