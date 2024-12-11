@@ -101,7 +101,7 @@ public class AuthenticationService {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
 
             if (user.isNew_user()) {
-                if (!user.getPassword().equals(passwordEncoder.encode(dto.getOldPassword()))){
+                if (!passwordEncoder.matches(user.getPassword(), dto.getOldPassword())) {
                     return new Response<>(
                             null,
                             true,
