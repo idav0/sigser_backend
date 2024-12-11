@@ -234,12 +234,12 @@ public class AuthenticationService {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
             if (user.getToken_tmp().equals(dto.getToken())) {
-                if (checkPassword(dto.getNewPassword())) {
+                if (!checkPassword(dto.getNewPassword())) {
                     return new Response<>(
                             null,
                             true,
                             400,
-                            "Password must be at least 8 characters long, have at least one uppercase letter, one special character, one number and not contain spaces"
+                            "Password must be at least 8 characters long, have at least one uppercase letter and one number and not contain spaces"
                     );
                 }
                 if (userRepository.updateUserPasswordByEmail(passwordEncoder.encode(dto.getNewPassword()), dto.getEmail()) > 0) {
