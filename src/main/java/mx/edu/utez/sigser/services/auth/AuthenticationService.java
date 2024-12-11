@@ -99,7 +99,27 @@ public class AuthenticationService {
     public Response<Object> updateNewUserPassword(UpdateNewUserPasswordDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
+
             if (user.isNew_user()) {
+                if (!user.getPassword().equals(passwordEncoder.encode(dto.getOldPassword()))){
+                    return new Response<>(
+                            null,
+                            true,
+                            400,
+                            "Temporary password is incorrect"
+                    );
+                }
+
+
+                if (user.getPassword().equals(passwordEncoder.encode(dto.getNewPassword()))) {
+                    return new Response<>(
+                            null,
+                            true,
+                            400,
+                            "Password must be different from the current one"
+                    );
+                }
+
                 if (!checkPassword(dto.getNewPassword())) {
                     return new Response<>(
                             null,
