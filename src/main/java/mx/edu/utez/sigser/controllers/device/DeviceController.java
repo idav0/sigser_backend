@@ -63,4 +63,22 @@ public class DeviceController {
         );
 
     }
+
+    @PutMapping("/")
+    public ResponseEntity<Response<Device>> update(@RequestBody CreateDeviceDTO dto) {
+        Response<Device> response = this.deviceService.update(dto.getDevice());
+        return new ResponseEntity<>(
+                response,
+                response.getStatus() == 200 ? HttpStatus.OK : response.getStatus() == 400 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Response<Boolean>> delete(@PathVariable Long id) {
+        Response<Boolean> response = this.deviceService.delete(id);
+        return new ResponseEntity<>(
+                response,
+                response.getStatus() == 200 ? HttpStatus.OK : response.getStatus() == 400 ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
 }

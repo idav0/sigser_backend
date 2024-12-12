@@ -127,6 +127,46 @@ public class DeviceService {
         }
     }
 
+    @Transactional(rollbackFor = SQLException.class)
+    public Response<Device> update (Device device) {
+        if (this.deviceRepository.existsById(device.getId())) {
+            device.setDeviceType(this.deviceTypeRepository.findById(device.getDeviceType().getId()).orElse(null));
+            return new Response<>(
+                    this.deviceRepository.saveAndFlush(device),
+                    false,
+                    200,
+                    "The Device was updated successfully"
+            );
+        } else {
+            return new Response<>(
+                    null,
+                    true,
+                    400,
+                    "The Device does not exist"
+            );
+        }
+    }
+
+    @Transactional(rollbackFor = SQLException.class)
+    public Response<Boolean> delete (Long id) {
+        if (this.deviceRepository.existsById(id)) {
+            this.deviceRepository.deleteById(id);
+            return new Response<>(
+                    true,
+                    false,
+                    200,
+                    "The Device was deleted successfully"
+            );
+        } else {
+            return new Response<>(
+                    false,
+                    true,
+                    400,
+                    "The Device does not exist"
+            );
+        }
+    }
+
 
 
 }
